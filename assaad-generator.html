@@ -404,7 +404,7 @@ footer a:hover { color: var(--blue); }
             <label class="lbl">IMAGENS DE REFERÊNCIA <span style="color:var(--gray);font-weight:400;">(máx. 3)</span></label>
             <div id="refSlots"></div>
             <div class="upz" id="upzRef" style="margin-top:8px;">
-              <input type="file" id="refPhoto" accept="image/*" onchange="onRefFile(this)">
+              <input type="file" id="refPhoto" accept="image/*" multiple onchange="onRefFile(this)">
               <div id="upRefDef">
                 <div class="up-ico">🖼</div>
                 <div class="up-txt"><strong>Clique ou arraste</strong><br>Arte de referência</div>
@@ -673,16 +673,36 @@ function rmFile(e) {
 
 /* ── UPLOAD REFERÊNCIA CUSTOM ── */
 function onRefFile(inp) {
-  const f = inp.files[0]; if (!f) return;
-  if (refFiles.length >= 3) { toast('Máximo de 3 referências atingido.', '#E85D24'); inp.value=''; return; }
-  const mime = f.type || 'image/jpeg';
-  const r = new FileReader();
-  r.onload = e => {
-    refFiles.push({ b64: e.target.result, mime, name: f.name, size: f.size });
+  const files = Array.from(inp.files);
+  if (!files.length) return;
+
+  const slotsLivres = 3 - refFiles.length;
+  if (slotsLivres <= 0) {
+    toast('Máximo de 3 referências atingido.', '#E85D24');
     inp.value = '';
-    renderRefSlots();
-  };
-  r.readAsDataURL(f);
+    return;
+  }
+
+  const filesToAdd = files.slice(0, slotsLivres);
+
+  if (files.length > slotsLivres) {
+    toast(`Apenas ${slotsLivres} arquivo(s) adicionado(s) (limite: 3).`, '#E85D24');
+  }
+
+  let loaded = 0;
+  filesToAdd.forEach(f => {
+    const mime = f.type || 'image/jpeg';
+    const r = new FileReader();
+    r.onload = e => {
+      refFiles.push({ b64: e.target.result, mime, name: f.name, size: f.size });
+      loaded++;
+      if (loaded === filesToAdd.length) {
+        inp.value = '';
+        renderRefSlots();
+      }
+    };
+    r.readAsDataURL(f);
+  });
 }
 function rmRefFile(e, idx) {
   e.preventDefault(); e.stopPropagation();
