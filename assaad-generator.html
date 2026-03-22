@@ -752,8 +752,18 @@ async function gen() {
 }
 
 async function callGemini(userMsg) {
-  // Usa backend /api/generate para proteger a chave
-  const endpoint = '/api/generate';
+  // Busca token do backend e chama Google direto (evita 413 com imagens grandes)
+  let apiKey;
+  try {
+    const tokenResp = await fetch('/api/token');
+    const tokenData = await tokenResp.json();
+    if (!tokenData.key) throw new Error('Token não disponível');
+    apiKey = tokenData.key;
+  } catch(e) {
+    throw new Error('Erro ao obter token: ' + e.message);
+  }
+  const model = 'gemini-3.1-flash-image-preview';
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   step('Preparando requisição...', 15);
 
