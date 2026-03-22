@@ -343,17 +343,7 @@ footer a:hover { color: var(--blue); }
     <div>
 
       <!-- API KEY -->
-      <div class="card">
-        <div class="card-hd"><div class="card-hd-dot"></div>Configuração</div>
-        <div class="card-bd">
-          <div class="warn">⚠ Regenere sua chave no <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a> após os testes.</div>
-          <div class="f">
-            <label class="lbl">GOOGLE AI API KEY</label>
-            <input type="password" id="apiKey" value="AIzaSyD830XdEqfpiXougSb-DiQ5LYmmoKO12X8">
-            <div class="st-ok" id="apiSt">✓ Configurada — Nano Banana 2 (gemini-3.1-flash-image-preview)</div>
-          </div>
-        </div>
-      </div>
+
 
       <!-- COR -->
       <div class="card">
@@ -746,14 +736,13 @@ function buildPrompt() {
 async function gen() {
   const key = document.getElementById('apiKey').value.trim();
   const userPrompt = document.getElementById('prompt').value.trim();
-  if (!key)        { toast('Cole sua API key.', '#DC2626'); return; }
   if (!userPrompt) { toast('Escreva algo no campo de prompt.', '#DC2626'); return; }
 
   curPrompt = buildPrompt();
   setLoad(true);
 
   try {
-    const url = await callGemini(key, curPrompt);
+    const url = await callGemini(curPrompt);
     showRes(url);
   } catch(err) {
     setLoad(false);
@@ -762,9 +751,9 @@ async function gen() {
   }
 }
 
-async function callGemini(key, userMsg) {
-  const model = 'gemini-3.1-flash-image-preview';
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+async function callGemini(userMsg) {
+  // Usa backend /api/generate para proteger a chave
+  const endpoint = '/api/generate';
 
   step('Preparando requisição...', 15);
 
