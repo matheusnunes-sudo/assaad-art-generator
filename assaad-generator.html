@@ -734,7 +734,7 @@ function buildPrompt() {
 
 /* ── GENERATE ── */
 async function gen() {
-  const key = document.getElementById('apiKey').value.trim();
+  // API key gerenciada pelo backend /api/generate
   const userPrompt = document.getElementById('prompt').value.trim();
   if (!userPrompt) { toast('Escreva algo no campo de prompt.', '#DC2626'); return; }
 
@@ -905,17 +905,7 @@ function toast(msg, color = '#0021E1') {
   setTimeout(() => t.classList.remove('on'), 3500);
 }
 
-document.getElementById('apiKey').addEventListener('input', function() {
-  const st = document.getElementById('apiSt');
-  const ch = document.getElementById('hchip');
-  if (this.value.length > 10) {
-    st.className = 'st-ok'; st.textContent = '✓ Configurada — Nano Banana 2 (gemini-3.1-flash-image-preview)';
-    ch.className = 'nav-badge badge-connected'; ch.textContent = '✓ API Conectada';
-  } else {
-    st.className = 'st-err'; st.textContent = '⚠ Cole sua API key';
-    ch.className = 'nav-badge badge-disconnected'; ch.textContent = '⚠ Sem chave';
-  }
-});
+// API key gerenciada pelo backend — sem necessidade de input no frontend
 
 /* drag & drop Assaad */
 const uz = document.getElementById('upz');
