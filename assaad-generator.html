@@ -162,6 +162,21 @@ select {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(0,33,225,0.15);
 }
+.sw-custom {
+  background: transparent !important;
+  border: 2px dashed #D1D5DB !important;
+  display: flex; align-items: center; justify-content: center;
+}
+.sw-custom.on {
+  border-color: var(--blue) !important;
+  border-style: solid !important;
+}
+.sw-custom-inner {
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.sw-custom.filled .sw-custom-inner { opacity: 0; }
 .sw span {
   position: absolute; bottom: 0; left: 0; right: 0;
   background: rgba(0,0,0,.5); font-size: 9px; font-weight: 700;
@@ -356,19 +371,17 @@ footer a:hover { color: var(--blue); }
             <div class="sw"    data-c="orange" data-h="#E85D24" data-n="Laranja"        style="background:#E85D24"><span>LARANJA</span></div>
             <div class="sw"    data-c="green"  data-h="#16A34A" data-n="Verde"          style="background:#16A34A"><span>VERDE</span></div>
             <div class="sw"    data-c="teal"   data-h="#0D9488" data-n="Teal"           style="background:#0D9488"><span>TEAL</span></div>
-            <div class="sw"    data-c="yellow" data-h="#F59E0B" data-n="Amarelo"        style="background:#F59E0B"><span>AMARELO</span></div>
             <div class="sw"    data-c="pink"   data-h="#E91E8C" data-n="Pink"           style="background:#E91E8C"><span>PINK</span></div>
-            <div class="sw" id="swOther" data-c="other" data-h="#FF6B6B" data-n="Personalizada" style="background:#FF6B6B;position:relative;">
+            <div class="sw sw-custom" id="swOther" data-c="other" data-h="" data-n="Personalizada" style="position:relative;">
               <input type="color" id="colorPicker" value="#FF6B6B" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;" title="Escolher cor">
-              <span style="font-size:9px;font-weight:700;color:white;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none;text-align:center;line-height:1.2;">OUTRA<br>COR</span>
-            </div>
-          </div>
-          <div id="hexInputWrap" style="display:none;margin-top:10px;">
-            <label class="lbl">COR SELECIONADA</label>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <div id="hexPreview" style="width:36px;height:36px;border-radius:var(--r3);border:1.5px solid var(--gray-md);flex-shrink:0;background:#FF6B6B;"></div>
-              <input type="text" id="hexInput" value="#FF6B6B" maxlength="7" style="flex:1;font-family:monospace;letter-spacing:.06em;text-transform:uppercase;">
-            </div>
+              <span class="sw-custom-inner" id="swCustomInner">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="14" cy="14" r="12" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="3 2" fill="none"/>
+                  <line x1="14" y1="7" x2="14" y2="21" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="7" y1="14" x2="21" y2="14" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div></div>
           </div>
         </div>
       </div>
@@ -574,6 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function applyColor(hex) {
     hex = hex.toUpperCase();
+    if (swOther) { swOther.classList.add('filled'); swOther.style.background = hex; }
     if (hexInp)  hexInp.value = hex;
     if (hexPrev) hexPrev.style.background = hex;
     if (swOther) { swOther.style.background = hex; swOther.dataset.h = hex; }
