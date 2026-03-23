@@ -157,24 +157,29 @@ select {
   transition: transform .14s, border-color .14s, box-shadow .14s;
   position: relative; overflow: hidden;
 }
+.sw.sw-custom { overflow: visible; }
 .sw:hover { transform: scale(1.07); }
 .sw.on {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(0,33,225,0.15);
 }
 .sw-custom {
-  background: transparent !important;
-  border: 2px dashed #D1D5DB !important;
+  background: transparent;
+  border: 2px dashed #C4C9D4;
   display: flex; align-items: center; justify-content: center;
+  overflow: visible;
 }
-.sw-custom.on {
-  border-color: var(--blue) !important;
-  border-style: solid !important;
+.sw-custom.on, .sw-custom.filled {
+  border-style: solid;
+  border-color: var(--blue);
 }
 .sw-custom-inner {
+  position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
   pointer-events: none;
+  opacity: 1;
   transition: opacity .2s;
+  z-index: 2;
 }
 .sw-custom.filled .sw-custom-inner { opacity: 0; }
 .sw span {
@@ -373,8 +378,8 @@ footer a:hover { color: var(--blue); }
             <div class="sw"    data-c="teal"   data-h="#0D9488" data-n="Teal"           style="background:#0D9488"><span>TEAL</span></div>
             <div class="sw"    data-c="pink"   data-h="#E91E8C" data-n="Pink"           style="background:#E91E8C"><span>PINK</span></div>
             <div class="sw sw-custom" id="swOther" data-c="other" data-h="" data-n="Personalizada" style="position:relative;">
-              <input type="color" id="colorPicker" value="#FF6B6B" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;" title="Escolher cor">
-              <span class="sw-custom-inner" id="swCustomInner">
+              <input type="color" id="colorPicker" value="#FF6B6B" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;z-index:1;" title="Escolher cor">
+              <span class="sw-custom-inner" id="swCustomInner" style="z-index:2;">
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="14" cy="14" r="12" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="3 2" fill="none"/>
                   <line x1="14" y1="7" x2="14" y2="21" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
