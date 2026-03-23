@@ -774,13 +774,7 @@ async function callGemini(userMsg) {
   // Parts do usuário
   const userParts = [];
 
-  if (refMode === 'fixed') {
-    step('Carregando referências da marca...', 20);
-    const refKeys = Object.keys(BRAND_REFS).slice(0, 4);
-    for (const key of refKeys) {
-      userParts.push({ inline_data: { mime_type: 'image/jpeg', data: BRAND_REFS[key].split(',')[1] } });
-    }
-  } else if (refMode === 'custom' && refFiles.length > 0) {
+  if (refFiles.length > 0) {
     step('Incluindo referências visuais...', 25);
     for (const rf of refFiles) {
       userParts.push({ inline_data: { mime_type: rf.mime, data: rf.b64.split(',')[1] } });
@@ -796,9 +790,7 @@ async function callGemini(userMsg) {
   userParts.push({ text: userMsg });
 
   const body = {
-    system_instruction: refMode === 'fixed'
-      ? { parts: [{ text: DNA_SYSTEM }] }
-      : { parts: [{ text: 'You are an AI image generator. Follow the user instructions precisely. Never include text in generated images.' }] },
+    system_instruction: { parts: [{ text: 'You are an AI image generator. Follow the user instructions precisely. Never include text in generated images.' }] },
     contents: [{ role: 'user', parts: userParts }],
     generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
   };
@@ -855,7 +847,7 @@ function showRes(url) {
   document.getElementById('resS').classList.add('on');
   document.getElementById('resImg').src = url;
   document.getElementById('resTags').innerHTML =
-    `<span class="tag">${selC.n}</span><span class="tag">${selR}</span><span class="tag">${b64Assaad ? 'Com Assaad' : 'Sem foto'}</span><span class="tag">${refMode === 'fixed' ? 'DNA Assaad' : 'Ref. custom'}</span>`;
+    `<span class="tag">${selC.n}</span><span class="tag">${selR}</span><span class="tag">${b64Assaad ? 'Com Assaad' : 'Sem foto'}</span><span class="tag">Ref. custom</span>`;
   document.getElementById('resPP').innerHTML =
     `<strong>Prompt enviado:</strong> ${curPrompt.substring(0, 240)}...`;
   document.getElementById('dlBtn').disabled = false;
