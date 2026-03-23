@@ -377,31 +377,9 @@ footer a:hover { color: var(--blue); }
       <div class="card">
         <div class="card-hd"><div class="card-hd-dot" style="background:var(--purple)"></div>Referência Visual</div>
         <div class="card-bd">
-          <div class="ref-toggle">
-            <button class="ref-btn on" id="refFixed" onclick="setRef('fixed')">
-              <span class="rb-ico">🎨</span>
-              DNA Assaad<br><small style="font-weight:400;opacity:.7">Referências da marca</small>
-            </button>
-            <button class="ref-btn" id="refCustom" onclick="setRef('custom')">
-              <span class="rb-ico">📎</span>
-              Referência própria<br><small style="font-weight:400;opacity:.7">Upload de imagem</small>
-            </button>
-          </div>
-
-          <!-- DNA fixo info -->
-          <div id="dnaInfo">
-            <div class="dna-badge">
-              <div class="dna-icon">✦</div>
-              <div class="dna-text">
-                <strong>DNA Visual da Plataforma Assaad ativo</strong>
-                Estilo vibrante e saturado · Elementos 3D isométricos · Sparkles e estrelas · Composição diagonal dinâmica · Tom jovem e celebratório · Cores da marca
-              </div>
-            </div>
-          </div>
-
-          <!-- Upload custom - até 3 referências -->
-          <div id="customRef" style="display:none">
-            <label class="lbl">IMAGENS DE REFERÊNCIA <span style="color:var(--gray);font-weight:400;">(máx. 3)</span></label>
+          
+          <div id="customRef">
+            <label class="lbl">IMAGENS DE REFERÊNCIA <span style="color:var(--orange);font-weight:500;">*</span> <span style="color:var(--gray);font-weight:400;">(mín. 1, máx. 3)</span></label>
             <div id="refSlots"></div>
             <div class="upz" id="upzRef" style="margin-top:8px;">
               <input type="file" id="refPhoto" accept="image/*" multiple onchange="onRefFile(this)">
@@ -534,7 +512,6 @@ Ex: Assaad no canto direito com braços cruzados, fundo com elementos de matemá
 /* ── STATE ── */
 let selC = { c:'blue', h:'#0021E1', n:'Azul Principal' };
 let selR = '1:1';
-let refMode = 'fixed'; // 'fixed' | 'custom'
 let b64Assaad = null, mimeAssaad = 'image/jpeg';
 let refFiles = []; // array de {b64, mime, name, size}
 let curPrompt = '', curUrl = '', hist = [];
@@ -638,13 +615,7 @@ document.querySelectorAll('.rb').forEach(b => {
 });
 
 /* ── REFERENCE MODE ── */
-function setRef(mode) {
-  refMode = mode;
-  document.getElementById('refFixed').classList.toggle('on', mode === 'fixed');
-  document.getElementById('refCustom').classList.toggle('on', mode === 'custom');
-  document.getElementById('dnaInfo').style.display = mode === 'fixed' ? 'block' : 'none';
-  document.getElementById('customRef').style.display = mode === 'custom' ? 'block' : 'none';
-}
+
 
 /* ── UPLOAD ASSAAD ── */
 function onFile(inp) {
@@ -733,14 +704,7 @@ function buildPrompt() {
   const userPrompt = document.getElementById('prompt').value.trim();
   let p = '';
 
-  if (refMode === 'fixed') {
-    // Usa o DNA fixo + prompt do usuário
-    p += `Background color: ${selC.n} (${selC.h}). Aspect ratio: ${selR}.\n`;
-    if (b64Assaad) p += `The uploaded photo is Pedro Assaad (founder/teacher). Integrate him into the composition.\n`;
-    if (userPrompt) p += `Specific instructions: ${userPrompt}\n`;
-    else p += `Create a vibrant social media art background in the brand DNA style described.\n`;
-  } else {
-    // Usa referência custom — ignora DNA fixo
+  {
     p += `Use the uploaded reference image as the primary visual style guide.\n`;
     p += `Background color direction: ${selC.n} (${selC.h}). Aspect ratio: ${selR}.\n`;
     if (b64Assaad) p += `Also include Pedro Assaad from the second uploaded photo in the composition.\n`;
@@ -757,6 +721,7 @@ async function gen() {
   // API key gerenciada pelo backend /api/generate
   const userPrompt = document.getElementById('prompt').value.trim();
   if (!userPrompt) { toast('Escreva algo no campo de prompt.', '#DC2626'); return; }
+  if (refFiles.length === 0) { toast('Adicione pelo menos 1 imagem de referência.', '#DC2626'); return; }
 
   curPrompt = buildPrompt();
   setLoad(true);
